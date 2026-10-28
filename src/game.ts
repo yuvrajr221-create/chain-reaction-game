@@ -6,10 +6,14 @@ export const PLANK_Y = TABLE_Y + 0.016;
 
 export const StartButton = createComponent('StartButton', {});
 export const ResetButton = createComponent('ResetButton', {});
+export const LeftButton = createComponent('LeftButton', {});
+export const RightButton = createComponent('RightButton', {});
 export const Plank = createComponent('Plank', {});
 
 export const actions = {
   start: () => {},
+  left: () => {},
+  right: () => {},
   reset: () => {
     window.location.reload();
   },
@@ -18,6 +22,8 @@ export const actions = {
 export class ButtonSystem extends createSystem({
   starts: { required: [StartButton, Pressed] },
   resets: { required: [ResetButton, Pressed] },
+  lefts: { required: [LeftButton, Pressed] },
+  rights: { required: [RightButton, Pressed] },
 }) {
   init(): void {
     this.queries.starts.subscribe('qualify', () => {
@@ -25,6 +31,12 @@ export class ButtonSystem extends createSystem({
     });
     this.queries.resets.subscribe('qualify', () => {
       actions.reset();
+    });
+    this.queries.lefts.subscribe('qualify', () => {
+      actions.left();
+    });
+    this.queries.rights.subscribe('qualify', () => {
+      actions.right();
     });
   }
 }
