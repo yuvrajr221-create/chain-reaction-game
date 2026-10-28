@@ -1,0 +1,44 @@
+<style>
+  .win-root {
+    flex-direction: column;
+    width: 40;
+    padding: 3;
+    gap: 2;
+    align-items: center;
+    background-color: #1c1d20;
+    border-radius: 3;
+  }
+  .win-title {
+    color: #ffd700;
+    font-size: 6;
+    font-weight: 700;
+    text-align: center;
+  }
+  .win-sub {
+    color: #fafaf7;
+    font-size: 3;
+    text-align: center;
+  }
+  .win-btn {
+    background-color: #22aa55;
+    border-radius: 2;
+    padding: 2;
+    width: 30;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .win-btn-text {
+    color: #ffffff;
+    font-size: 4;
+    font-weight: 700;
+    text-align: center;
+  }
+</style>
+<div id="win-root" class="win-root">
+  <div id="win-title" class="win-title">YOU WIN</div>
+  <div id="win-sub" class="win-sub">Bridge complete</div>
+  <div id="win-btn" class="win-btn">
+    <div class="win-btn-text">Play again</div>
+  </div>
+</div>

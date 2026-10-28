@@ -57,6 +57,7 @@ export default defineAssets({
     priority: 'lazy',
   },
   'welcome-panel': uikitml('welcome.uikitml', 'Welcome Panel'),
+  'win-panel': uikitml('win.uikitml', 'Win Panel'),
   'label-grab': uikitml('label-grab.uikitml', 'Grab Label'),
   'label-select': uikitml('label-select.uikitml', 'Select Label'),
   'label-spin': uikitml('label-spin.uikitml', 'Spin Label'),

@@ -1,4 +1,4 @@
-import { createComponent, createSystem, Types } from '@iwsdk/core';
+import { createComponent, createSystem, Types, UIKitMLAsset } from '@iwsdk/core';
 
 export const Ball = createComponent('Ball', {});
 
@@ -7,21 +7,27 @@ export const Goal = createComponent('Goal', {
   reached: { type: Types.Boolean, default: false },
 });
 
-function showWin() {
-  const d = document.createElement('div');
-  d.textContent = 'जीत 🎉';
-  d.style.cssText =
-    'position:fixed;top:20%;left:0;right:0;text-align:center;' +
-    'font:700 64px sans-serif;color:#fff;text-shadow:0 2px 8px #000;' +
-    'z-index:9999;pointer-events:none';
-  document.body.appendChild(d);
-}
-
 export class GoalSystem extends createSystem({
   goals: { required: [Goal] },
   balls: { required: [Ball] },
 }) {
+  private winRoot: any = null;
+  private winReady = false;
+
+  private setupPanel() {
+    if (this.winReady) return;
+    const panel = this.world.getSceneObject<UIKitMLAsset>('win-panel');
+    const root = panel ? panel.getElementById('win-root') : null;
+    if (root == null) return;
+    this.winRoot = root;
+    this.winRoot.setProperties({ display: 'none' });
+    const btn = panel.getElementById('win-btn');
+    if (btn) btn.addEventListener('click', () => { window.location.reload(); });
+    this.winReady = true;
+  }
+
   update() {
+    this.setupPanel();
     for (const g of this.queries.goals.entities) {
       if (g.getValue(Goal, 'reached')) continue;
       const go = g.object3D;
@@ -34,7 +40,9 @@ export class GoalSystem extends createSystem({
           g.setValue(Goal, 'reached', true);
           const m = (go as any).material;
           if (m) m.color.set(0xffd700);
-          showWin();
+          if (this.winRoot) {
+            this.winRoot.setProperties({ display: 'flex' });
+          }
         }
       }
     }
