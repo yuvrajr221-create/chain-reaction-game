@@ -128,7 +128,7 @@ World.create(
 
   function addButton(x: number, color: number, tag: any) {
     const m = new Mesh(
-      new BoxGeometry(0.14, 0.07, 0.14),
+      new BoxGeometry(0.18, 0.1, 0.18),
       new MeshStandardMaterial({ color }),
     );
     m.position.set(x, Y + 0.1, Z + 0.4);
@@ -137,11 +137,11 @@ World.create(
     e.addComponent(PokeInteractable);
     e.addComponent(tag);
   }
-  addButton(-0.32, 0x3377ff, LeftButton);
-  addButton(-0.16, 0x3377ff, RightButton);
-  addButton(0.06, 0x22aa55, StartButton);
-  addButton(0.22, 0xdd3333, ResetButton);
-  if (LV.planks === 2) addButton(0.38, 0xffcc00, PickButton);
+  addButton(-0.45, 0x3377ff, LeftButton);
+  addButton(-0.21, 0x3377ff, RightButton);
+  addButton(0.15, 0x22aa55, StartButton);
+  addButton(0.63, 0xdd3333, ResetButton);
+  if (LV.planks === 2) addButton(0.39, 0xffcc00, PickButton);
 
   function movePlank(dx: number) {
     if (started) return;
