@@ -1,3 +1,4 @@
+import { CylinderGeometry } from 'three';
 import {
   World,
   Mesh,
@@ -115,10 +116,10 @@ World.create(
   ballEntity.addComponent(Ball);
 
   const goal = new Mesh(
-    new SphereGeometry(0.1),
+    new CylinderGeometry(0.07, 0.05, 0.14),
     new MeshStandardMaterial({
-      color: 0x22cc66,
-      transparent: true,
+      color: 0xc46a1a,
+      transparent: false,
       opacity: 0.35,
     }),
   );
