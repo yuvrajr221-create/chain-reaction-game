@@ -14,7 +14,7 @@ import {
 } from '@iwsdk/core';
 import projectOptions from 'virtual:iwsdk-project';
 import { LV } from './levels.js';
-import { Ball, Goal, GoalSystem } from './goal.js';
+import { Ball, Goal, GoalSystem, gameState } from './goal.js';
 import {
   StartButton,
   ResetButton,
@@ -161,6 +161,7 @@ World.create(
   actions.start = () => {
     if (started) return;
     started = true;
+    gameState.started = true;
     for (const p of planks) {
       p.entity.addComponent(PhysicsShape, {
         shape: PhysicsShapeType.Box,
