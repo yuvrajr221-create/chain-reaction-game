@@ -1,4 +1,5 @@
 import { createComponent, createSystem, Types, UIKitMLAsset } from '@iwsdk/core';
+import { HAS_NEXT, nextLevelUrl } from './levels.js';
 
 export const Ball = createComponent('Ball', {});
 
@@ -22,7 +23,14 @@ export class GoalSystem extends createSystem({
     this.winRoot = root;
     this.winRoot.setProperties({ display: 'none' });
     const btn = panel.getElementById('win-btn');
-    if (btn) btn.addEventListener('click', () => { window.location.reload(); });
+    const label = panel.getElementById('win-btn-text');
+    if (label && HAS_NEXT) label.setProperties({ text: 'Next level' });
+    if (btn) {
+      btn.addEventListener('click', () => {
+        if (HAS_NEXT) window.location.href = nextLevelUrl();
+        else window.location.reload();
+      });
+    }
     this.winReady = true;
   }
 
@@ -40,9 +48,7 @@ export class GoalSystem extends createSystem({
           g.setValue(Goal, 'reached', true);
           const m = (go as any).material;
           if (m) m.color.set(0xffd700);
-          if (this.winRoot) {
-            this.winRoot.setProperties({ display: 'flex' });
-          }
+          if (this.winRoot) this.winRoot.setProperties({ display: 'flex' });
         }
       }
     }

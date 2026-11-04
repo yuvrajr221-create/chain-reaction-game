@@ -39,6 +39,6 @@
   <div id="win-title" class="win-title">YOU WIN</div>
   <div id="win-sub" class="win-sub">Bridge complete</div>
   <div id="win-btn" class="win-btn">
-    <div class="win-btn-text">Play again</div>
+    <div id="win-btn-text" class="win-btn-text">Play again</div>
   </div>
 </div>

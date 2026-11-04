@@ -15,6 +15,7 @@ import {
   MovementMode,
 } from '@iwsdk/core';
 import projectOptions from 'virtual:iwsdk-project';
+import { LV } from './levels.js';
 import { Ball, Goal, GoalSystem } from './goal.js';
 import {
   StartButton,
@@ -69,8 +70,8 @@ World.create(
     });
     e.addComponent(PhysicsBody, { state: PhysicsState.Static });
   }
-  addTable(-0.35);
-  addTable(0.35);
+  addTable(-(LV.gap / 2 + 0.25));
+  addTable(LV.gap / 2 + 0.25);
 
   // तख्ता (Start से पहले बिना फिजिक्स के, सिर्फ दिखने वाला)
   const plank = new Mesh(
@@ -92,7 +93,7 @@ World.create(
     new SphereGeometry(0.07),
     new MeshStandardMaterial({ color: 0xff5533 }),
   );
-  ball.position.set(-0.56, Y + 0.1, Z);
+  ball.position.set(-(LV.gap / 2 + 0.5) + 0.04, Y + 0.1, Z);
   const ballEntity = world.createTransformEntity(ball);
   ballEntity.addComponent(PhysicsShape, {
     shape: PhysicsShapeType.Sphere,
@@ -112,7 +113,7 @@ World.create(
       opacity: 0.35,
     }),
   );
-  goal.position.set(0.4, Y + 0.06, Z);
+  goal.position.set(LV.gap / 2 + 0.3, Y + 0.06, Z);
   const goalEntity = world.createTransformEntity(goal);
   goalEntity.addComponent(Goal, { radius: 0.1 });
 
