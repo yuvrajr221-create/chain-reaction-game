@@ -11,8 +11,6 @@ import {
   PhysicsManipulation,
   RayInteractable,
   PokeInteractable,
-  DistanceGrabbable,
-  MovementMode,
 } from '@iwsdk/core';
 import projectOptions from 'virtual:iwsdk-project';
 import { LV } from './levels.js';
@@ -22,6 +20,7 @@ import {
   ResetButton,
   LeftButton,
   RightButton,
+  PickButton,
   Plank,
   ButtonSystem,
   PlankSystem,
@@ -34,7 +33,6 @@ import {
 const params = new URLSearchParams(window.location.search);
 const BRIDGE = params.get('bridge') === '1';
 const AUTOSTART = params.get('autostart') === '1';
-const GRAB = params.get('grab') === '1';
 const STEP = 0.05;
 
 World.create(
@@ -48,14 +46,15 @@ World.create(
     .registerComponent(ResetButton)
     .registerComponent(LeftButton)
     .registerComponent(RightButton)
+    .registerComponent(PickButton)
     .registerComponent(Plank);
   world.registerSystem(GoalSystem);
   world.registerSystem(ButtonSystem);
   world.registerSystem(PlankSystem);
 
   let started = false;
+  let active = 0;
 
-  // मेज़ के दो हिस्से (बीच में खाई)
   function addTable(x: number) {
     const m = new Mesh(
       new BoxGeometry(0.5, 0.05, 0.6),
@@ -73,22 +72,33 @@ World.create(
   addTable(-(LV.gap / 2 + 0.25));
   addTable(LV.gap / 2 + 0.25);
 
-  // तख्ता (Start से पहले बिना फिजिक्स के, सिर्फ दिखने वाला)
-  const plank = new Mesh(
-    new BoxGeometry(0.4, 0.02, 0.2),
-    new MeshStandardMaterial({ color: 0xd9a066 }),
-  );
-  plank.position.set(BRIDGE ? 0 : -0.25, PLANK_Y, Z);
-  const plankEntity = world.createTransformEntity(plank);
-  plankEntity.addComponent(Plank);
-  if (GRAB) {
-    plankEntity.addComponent(RayInteractable);
-    plankEntity.addComponent(DistanceGrabbable, {
-      movementMode: MovementMode.MoveFromTarget,
-    });
+  const planks: { mesh: Mesh; entity: any }[] = [];
+  function addPlank(x: number, color: number) {
+    const mesh = new Mesh(
+      new BoxGeometry(0.4, 0.02, 0.2),
+      new MeshStandardMaterial({ color }),
+    );
+    mesh.position.set(x, PLANK_Y, Z);
+    const entity = world.createTransformEntity(mesh);
+    entity.addComponent(Plank);
+    planks.push({ mesh, entity });
+  }
+  if (LV.planks === 2) {
+    addPlank(-0.55, 0xd9a066);
+    addPlank(0.55, 0x8fc9a0);
+  } else {
+    addPlank(BRIDGE ? 0 : -0.25, 0xd9a066);
   }
 
-  // गेंद
+  function highlight() {
+    if (planks.length < 2) return;
+    planks.forEach((p, i) => {
+      const mat = p.mesh.material as any;
+      mat.emissive.set(i === active ? 0x666600 : 0x000000);
+    });
+  }
+  highlight();
+
   const ball = new Mesh(
     new SphereGeometry(0.07),
     new MeshStandardMaterial({ color: 0xff5533 }),
@@ -104,7 +114,6 @@ World.create(
   ballEntity.addComponent(PhysicsBody, { state: PhysicsState.Dynamic });
   ballEntity.addComponent(Ball);
 
-  // लक्ष्य
   const goal = new Mesh(
     new SphereGeometry(0.1),
     new MeshStandardMaterial({
@@ -117,7 +126,6 @@ World.create(
   const goalEntity = world.createTransformEntity(goal);
   goalEntity.addComponent(Goal, { radius: 0.1 });
 
-  // बटन
   function addButton(x: number, color: number, tag: any) {
     const m = new Mesh(
       new BoxGeometry(0.14, 0.07, 0.14),
@@ -133,27 +141,34 @@ World.create(
   addButton(-0.16, 0x3377ff, RightButton);
   addButton(0.06, 0x22aa55, StartButton);
   addButton(0.22, 0xdd3333, ResetButton);
+  if (LV.planks === 2) addButton(0.38, 0xffcc00, PickButton);
 
-  // क्रियाएँ
   function movePlank(dx: number) {
     if (started) return;
-    let x = plank.position.x + dx;
+    const p = planks[active].mesh;
+    let x = p.position.x + dx;
     if (x < -0.55) x = -0.55;
     if (x > 0.55) x = 0.55;
-    plank.position.x = x;
+    p.position.x = x;
   }
   actions.left = () => movePlank(-STEP);
   actions.right = () => movePlank(STEP);
+  actions.pick = () => {
+    if (started || planks.length < 2) return;
+    active = 1 - active;
+    highlight();
+  };
   actions.start = () => {
     if (started) return;
     started = true;
-    // तख्ते में अब फिजिक्स जोड़ो (जहाँ रखा है वहीं)
-    plankEntity.addComponent(PhysicsShape, {
-      shape: PhysicsShapeType.Box,
-      dimensions: [0.4, 0.02, 0.2],
-      friction: 0.8,
-    });
-    plankEntity.addComponent(PhysicsBody, { state: PhysicsState.Static });
+    for (const p of planks) {
+      p.entity.addComponent(PhysicsShape, {
+        shape: PhysicsShapeType.Box,
+        dimensions: [0.4, 0.02, 0.2],
+        friction: 0.8,
+      });
+      p.entity.addComponent(PhysicsBody, { state: PhysicsState.Static });
+    }
     ballEntity.addComponent(PhysicsManipulation, {
       linearVelocity: [1.2, 0, 0],
     });
@@ -169,6 +184,6 @@ World.create(
   document.body.appendChild(dbg);
   setInterval(() => {
     dbg.textContent =
-      'plankX ' + plank.position.x.toFixed(2) + ' | started ' + started;
+      'plank' + (active + 1) + ' X ' + planks[active].mesh.position.x.toFixed(2) + ' | started ' + started;
   }, 200);
 });

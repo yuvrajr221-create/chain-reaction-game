@@ -8,12 +8,14 @@ export const StartButton = createComponent('StartButton', {});
 export const ResetButton = createComponent('ResetButton', {});
 export const LeftButton = createComponent('LeftButton', {});
 export const RightButton = createComponent('RightButton', {});
+export const PickButton = createComponent('PickButton', {});
 export const Plank = createComponent('Plank', {});
 
 export const actions = {
   start: () => {},
   left: () => {},
   right: () => {},
+  pick: () => {},
   reset: () => {
     window.location.reload();
   },
@@ -24,20 +26,14 @@ export class ButtonSystem extends createSystem({
   resets: { required: [ResetButton, Pressed] },
   lefts: { required: [LeftButton, Pressed] },
   rights: { required: [RightButton, Pressed] },
+  picks: { required: [PickButton, Pressed] },
 }) {
   init(): void {
-    this.queries.starts.subscribe('qualify', () => {
-      actions.start();
-    });
-    this.queries.resets.subscribe('qualify', () => {
-      actions.reset();
-    });
-    this.queries.lefts.subscribe('qualify', () => {
-      actions.left();
-    });
-    this.queries.rights.subscribe('qualify', () => {
-      actions.right();
-    });
+    this.queries.starts.subscribe('qualify', () => { actions.start(); });
+    this.queries.resets.subscribe('qualify', () => { actions.reset(); });
+    this.queries.lefts.subscribe('qualify', () => { actions.left(); });
+    this.queries.rights.subscribe('qualify', () => { actions.right(); });
+    this.queries.picks.subscribe('qualify', () => { actions.pick(); });
   }
 }
 
