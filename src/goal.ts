@@ -1,4 +1,4 @@
-import { createComponent, createSystem, Types, UIKitMLAsset } from '@iwsdk/core';
+import { createComponent, createSystem, Types, UIKitMLAsset, AudioUtils } from '@iwsdk/core';
 import { HAS_NEXT, nextLevelUrl } from './levels.js';
 
 export const Ball = createComponent('Ball', {});
@@ -56,6 +56,7 @@ export class GoalSystem extends createSystem({
   private showWin() {
     if (this.won || this.winRoot == null) return;
     this.won = true;
+    AudioUtils.createOneShot(this.world, './audio/chime.mp3', { volume: 0.8, positional: false });
     if (this.label && HAS_NEXT) this.label.setProperties({ text: 'Next level' });
     this.winRoot.setProperties({ display: 'flex' });
   }
