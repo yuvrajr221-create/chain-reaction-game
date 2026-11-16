@@ -88,7 +88,7 @@ World.create(
     addPlank(-0.55, 0xd9a066);
     addPlank(0.55, 0x8fc9a0);
   } else {
-    addPlank(BRIDGE ? 0 : -0.25, 0xd9a066);
+    addPlank(BRIDGE ? 0 : -0.25, 0xb0b8c0);
   }
 
   function highlight() {

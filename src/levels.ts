@@ -2,6 +2,8 @@ export const LEVELS = [
   { gap: 0.2, planks: 1 },
   { gap: 0.38, planks: 1 },
   { gap: 0.76, planks: 2 },
+  { gap: 0.7, planks: 2 },
+  { gap: 0.78, planks: 2 },
 ];
 
 const n = parseInt(new URLSearchParams(window.location.search).get('level') || '1', 10);
