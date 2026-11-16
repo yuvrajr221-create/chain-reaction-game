@@ -179,13 +179,4 @@ World.create(
     setTimeout(() => actions.start(), 2500);
   }
 
-  // debug
-  const dbg = document.createElement('div');
-  dbg.style.cssText =
-    'position:fixed;top:60px;left:8px;z-index:9999;font:16px monospace;color:#000;background:#fff9;padding:4px;pointer-events:none';
-  document.body.appendChild(dbg);
-  setInterval(() => {
-    dbg.textContent =
-      'plank' + (active + 1) + ' X ' + planks[active].mesh.position.x.toFixed(2) + ' | started ' + started;
-  }, 200);
 });
